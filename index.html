@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link href="http://lib.sinaapp.com/js/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet" type="text/css"
+          media="all"/>
+    <link href="http://lib.sinaapp.com/js/bootstrap/2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet"
+          type="text/css" media="all"/>
+    <link href="static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="static/css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <!--[if lt IE 9]>
+      <script type="text/javascript" src="js/html5shiv.js"></script>
+    </[endif]-->
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/jquery/2.0.3/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="http://lib.sinaapp.com/js/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="static/js/core.js"></script>
+</head>
+<script type="text/javascript">
+    function addClick() {
+        setCookie("username", $('#username').val());
+        setCookie("password", $('#password').val());
+        $.post("/user/add",
+                {
+                    username:$('#username').val(),
+                    password:$('#password').val(),
+                    trigger:$('#trigger').val(),
+                    start:$('input:radio[name="start"]:checked').val()
+                },
+                function (data) {
+                    if (data != "error") {
+                        location.reload();
+                    }
+                })
+    }
+    function getCookie(objName){
+        var arr = document.cookie.match(new RegExp("(^| )"+objName+"=([^;]*)(;|$)"));
+        if(arr != null) return unescape(arr[2]); return null;
+    }
+    function setCookie(name, value){
+        var Days = 30;
+        var exp = new Date();
+        exp.setTime(exp.getTime() + Days*24*60*60*1000);
+        document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+    }
+    $(document).ready(function(){
+        $('#username').val(getCookie("username"));
+        $('#password').val(getCookie("password"));
+    });
+</script>
+<body data-spy="scroll" data-target=".bs-docs-sidebar">
+
+<div class="container">
+    <div class="row">
+        <section id="download-files">
+            <div class="main">
+                <ul id="tab-nav" class="nav nav-tabs">
+                    <li class="active" id="nav-task-list"><a href="#task-list" data-toggle="tab">Task List</a></li>
+                    <li id="nav-add-task"><a href="#add-task" data-toggle="tab">Add Task</a></li>
+                </ul>
+                <div id="tab-content" class="tab-content">
+                    <div id="task-list" class="tab-pane fade in active">
+                        <table id="tab-task-list" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>UserName</th>
+                                <th>PassWord</th>
+                                <th class="center time">Trigger</th>
+                                <th class="center start">Start</th>
+                                <!--<th class="center operate">Operate</th>-->
+                            </tr>
+                            </thead>
+                            {% for task in tasks %}
+                            <tr>
+                                <td>{{task.split('\n')[0]}}</td>
+                                <td>{{task.split('\n')[1]}}</td>
+                                <td>{{task.split('\n')[2]}}</td>
+                                <td>{{task.split('\n')[3]}}</td>
+                            </tr>
+                            {% end %}
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <table id="tab-cancel-list" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Cancel</th>
+                                        <th class="center time">Trigger</th>
+                                        <th class="center operate">Operate</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="span6">
+                                <table id="tab-heartbeat" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Heartbeat</th>
+                                        <th class="center time">LastTime</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="add-task" class="tab-pane fade">
+                        <form class="form-horizontal">
+                            <div class="control-group">
+                                <label class="control-label" for="username">UserName</label>
+
+                                <div class="controls">
+                                    <input type="text" id="username" name="username"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="password">PassWord</label>
+
+                                <div class="controls">
+                                    <input type="text" id="password" name="password"/>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Trigger</label>
+
+                                <div class="controls">
+                                    <div id="trigger-widget" class="input-append date">
+                                        <input type="text" readonly data-format="yyyy-MM-dd hh:mm:ss" class="trigger"
+                                               id="trigger" name="trigger"/>
+                        <span class="add-on">
+                          <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Start</label>
+
+                                <div class="controls">
+                                    <label class="radio">
+                                        <input type="radio" name="start" value="true" checked/>true
+                                    </label>
+                                    <label class="radio">
+                                        <input type="radio" name="start" value="false"/>false
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <div class="controls">
+                                    <button id="btn-add-task" type="button" class="btn btn-primary"
+                                            onclick="addClick()">Add
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
